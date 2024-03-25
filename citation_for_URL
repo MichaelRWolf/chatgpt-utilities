@@ -1,0 +1,64 @@
+#! /bin/bash
+
+chat_program='chatGPT-CLI'
+# chat_program='echo -e'
+
+
+function cat_instructions_for_URL () {
+URL="${@}"
+
+cat<<INSTRUCTIONS
+*Goal - Create content for a logseq node
+
+**Task - Retrieve page from URL that is provided
+
+**Task - Using template (provided below), fill in values for fields
+  - Title
+  - Author(s)
+  - Publication - or media, blog, channel...
+  - Publication Date
+
+**Task - Summarize article
+  - If possible, provide a short paragraph summarizing the article.
+
+
+**URL
+$URL
+
+INSTRUCTIONS
+}
+
+function cat_template () {
+    cat<<TEMPLATE
+* Template
+''' mark-down
+* Reference & Citation
+| Title            |   |
+| Author(s)        |   |
+| Publication      |   |
+| Publication Date |   |
+
+
+** APA Citation
+
+** MLA Citation
+
+** CSM Citation
+
+* Summary
+
+'''
+TEMPLATE
+}
+
+function main () {
+    URL=""
+    read URL
+
+    INSTRUCTIONS="$(cat_instructions_for_URL \"$URL\")"
+    TEMPLATE="$(cat_template)"
+
+    ${chat_program} "${INSTRUCTIONS}\n${TEMPLATE}"
+}
+
+main
