@@ -1,8 +1,10 @@
 #! /bin/bash
 
-chat_program='chatGPT-CLI'
-# chat_program='echo -e'
-
+if [[ $1 = '--echo' ]]; then
+    chat_program='echo -e'
+else
+    chat_program='chatGPT-CLI'
+fi
 
 function cat_instructions_for_URL () {
 URL="${@}"
@@ -19,11 +21,12 @@ cat<<INSTRUCTIONS
   - Publication Date
 
 **Task - Summarize article
-  - If possible, provide a short paragraph summarizing the article.
+  - If possible, provide a short paragraph summarizing the article in the "ChatGPT Summary" Section.
 
 
 **URL
 $URL
+
 
 INSTRUCTIONS
 }
@@ -45,7 +48,10 @@ function cat_template () {
 
 ** CSM Citation
 
-* Summary
+* ChatGPT Summary
+
+
+* Human Summary
 
 '''
 TEMPLATE
@@ -57,6 +63,8 @@ function main () {
 
     INSTRUCTIONS="$(cat_instructions_for_URL \"$URL\")"
     TEMPLATE="$(cat_template)"
+
+    set -xv
 
     ${chat_program} "${INSTRUCTIONS}\n${TEMPLATE}"
 }
