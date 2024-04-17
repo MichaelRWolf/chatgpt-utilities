@@ -68,12 +68,12 @@ def main():
     parser.add_argument('url', 
                         help='The URL to process')
 
-    parser.add_argument('--chat-program', 
-                        default='chatGPT-CLI', 
+    parser.add_argument('--chat-program',
+                        default='chatGPT-CLI',
                         help='The chat program to use (default: chatGPT-CLI)')
 
-    parser.add_argument("--no-execute", 
-                        action="store_true", 
+    parser.add_argument("--no-execute",
+                        action="store_true",
                         help="Behave as if '--chat-program cat' is set")
 
 
