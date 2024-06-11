@@ -7,7 +7,7 @@ CHAT_PROGRAM_DEFAULT = 'chatGPT-CLI'
 
 
 def get_instructions(url):
-    template=get_template()
+    template = get_template()
     instructions = f"""
 *Goal - Create content for a logseq node
 
@@ -25,6 +25,7 @@ def get_instructions(url):
 ```
 """
     return instructions
+
 
 def get_template():
     template = """
@@ -53,8 +54,6 @@ def get_template():
     return template
 
 
-
-
 def process_input(url, chat_program):
     instructions = get_instructions(url)
     template = get_template()
@@ -67,9 +66,10 @@ def process_input(url, chat_program):
     else:
         print(input_text)
 
+
 def main():
     parser = argparse.ArgumentParser(description='Process a URL with a chat program.')
-    parser.add_argument('url', 
+    parser.add_argument('url',
                         help='The URL to process')
 
     parser.add_argument('--chat-program',
@@ -80,14 +80,13 @@ def main():
                         action="store_true",
                         help="Behave as if '--chat-program cat' is set")
 
-
     args = parser.parse_args()
 
     if args.no_execute:
         args.chat_program = "cat"
 
-
     process_input(args.url, args.chat_program)
+
 
 if __name__ == "__main__":
     main()
