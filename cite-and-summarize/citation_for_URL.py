@@ -1,13 +1,12 @@
 #! /usr/bin/env python3
 
 import argparse
+import os
 import subprocess
+import sys
 from datetime import datetime
 
 CHAT_PROGRAM_DEFAULT = 'chatGPT-CLI'
-
-import sys
-import os
 
 
 def get_script_name():
@@ -76,8 +75,6 @@ def get_template():
 
 def process_input(url, chat_program):
     instructions = get_instructions(url)
-    template = get_template()
-    # input_text = f"{instructions}\n{template}"
     input_text = f"{instructions}"
 
     if chat_program == 'chatGPT-CLI':
