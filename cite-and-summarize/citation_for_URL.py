@@ -2,8 +2,25 @@
 
 import argparse
 import subprocess
+from datetime import datetime
 
 CHAT_PROGRAM_DEFAULT = 'chatGPT-CLI'
+
+import sys
+import os
+
+
+def get_script_name():
+    script_path = sys.argv[0]
+    script_name = os.path.basename(script_path)
+    return script_name
+
+
+def get_current_datetime_iso():
+    current_datetime = datetime.now().astimezone()
+    iso_format = current_datetime.strftime('%Y-%m-%dT%H:%M%z')
+    # Truncate the timezone offset to only include the hour part
+    return iso_format
 
 
 def get_instructions(url):
@@ -22,6 +39,9 @@ def get_instructions(url):
 *Template
 ```mark-down
 {template}
+
+Generator: `{get_script_name()}(1)`
+Generation time: {get_current_datetime_iso()}
 ```
 """
     return instructions
