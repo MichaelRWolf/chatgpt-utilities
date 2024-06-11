@@ -1,8 +1,11 @@
-#! /usr/bin/python3
+#! /usr/bin/env python3
 
 import io
 import argparse
 import subprocess
+
+CHAT_PROGRAM_DEFAULT = 'chatGPT-CLI'
+
 
 def get_instructions(url):
     instructions = f"""
@@ -69,8 +72,8 @@ def main():
                         help='The URL to process')
 
     parser.add_argument('--chat-program',
-                        default='chatGPT-CLI',
-                        help='The chat program to use (default: chatGPT-CLI)')
+                        default=CHAT_PROGRAM_DEFAULT,
+                        help=f"The chat program to use (default: {CHAT_PROGRAM_DEFAULT})")h
 
     parser.add_argument("--no-execute",
                         action="store_true",
