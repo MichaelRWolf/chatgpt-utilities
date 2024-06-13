@@ -73,12 +73,14 @@ def main():
                 'content': prompt
             }
         ],
-        'max_tokens': 200
+        'max_tokens': 200,
     }
 
     if args.no_execute:
-        logging.debug("Request data prepared. Here is the data that would be sent:")
-        logging.debug(json.dumps(data, indent=2))
+        print("Request data prepared. Here is the data that would be sent:\n",
+              json.dumps(data, indent=2),
+              sep='',
+              file=sys.stderr)
         sys.exit(2)
     else:
         logging.info(f"Will send request to {url}")
@@ -91,15 +93,17 @@ def main():
             logging.info(f"Response time: {response.elapsed.total_seconds()} seconds")
 
             result = response.json()
-            logging.info(f"Usage details: {result.get('usage', 'No usage info')}")
             logging.debug(f"result: {result}")
             choices_0 = result['choices'][0]
             choices_0_message = choices_0['message']
+            usage_details = f"Usage details: {result.get('usage', 'No usage info')}"
             if 'finish_reason' in choices_0 and choices_0['finish_reason'] == 'stop':
                 logging.info(f"Choices 0 finish_reason: {choices_0['finish_reason']}")
+                logging.info(usage_details)
             else:
                 logging.warning(
                     f"Choices 0 message finish_reason is not 'stop': {choices_0['finish_reason']}")
+                logging.warning(usage_details)
 
             # logging.debug("1. result: ", result, "\n")
             # logging.debug("2. result['choices']", result['choices'], "\n")
