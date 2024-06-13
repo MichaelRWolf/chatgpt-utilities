@@ -34,6 +34,11 @@ def main():
     - If it looks like a calendar event, 
         then organize it into the form of an *.ics file
         else the reply should be "No calendar event found this input", followed by the text from 'Raw Input' section.
+        
+    Other considerations:
+    - Before generating the *.ics file, determine the current date and time.
+    - If the event does not contain a year, add a year so that the event is in the future.
+    - Do not generate a DTSTAMP line.
     """
 
     output_format = """
