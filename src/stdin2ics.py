@@ -28,13 +28,24 @@ def main():
 
     # Step 3: Define the 'instructions' variable
     instructions = """
-    Gather input into variable called 'raw_input'.
-    Analyze 'raw_input'. If it looks like a calendar event, organize it into the form of an *.ics file and return that as the reply.
-    If it does not look like a calendar event, throw an error that can be handled by whoever consumes the reply.
+    - Analyze text input from `Raw Input` section (below).
+    - If it looks like a calendar event, 
+        then organize it into the form of an *.ics file
+        else the reply should be "No calendar event found this input", followed by the text from 'Raw Input' section.
+    """
+
+    output_format = """
+    If it looks like a calendar event,
+     - output the text as an *.ics file
+     - use version 2.0 (from RFC 5545)
+     - do NOT include leading or trailing triple-back-ticks
+     - do NOT include leading or trailing explanation
     """
 
     # Step 4: Concatenate 'instructions' and 'raw_input' to form the prompt
-    prompt = json.dumps(instructions + "\n" + raw_input)
+    prompt = json.dumps(f"* Instructions\n{instructions}\n\n"
+                        f"* Output Format\n{output_format}\n\n"
+                        f"* Raw Input\n{raw_input}\n")
 
     # Define the API endpoint
     # url = 'https://api.openai.com/v1/engines/davinci-codex/completions'
@@ -72,7 +83,7 @@ def main():
                 'content': prompt
             }
         ],
-        # 'max_tokens': 5
+        'max_tokens': 200
     }
 
     if args.no_execute:
@@ -82,7 +93,7 @@ def main():
     else:
         logging.info(f"Will send request to {url}")
 
-        response = None;
+        response = None
         try:
             response = requests.post(url, headers=headers, data=json.dumps(data))
             response.raise_for_status()
@@ -93,11 +104,15 @@ def main():
             logging.info(f"Usage details: {result.get('usage', 'No usage info')}")
             logging.debug(f"result: {result}")
 
-            print("1. result: ", result, "\n")
-            print("2. result['choices']", result['choices'], "\n")
-            print("3. result['choices'][0]", result['choices'][0], "\n")
-            print("4. result['choices'][0]['text']",
-                  result['choices'][0].get('text', f"No 'text' value in {result['choices'][0]}"), "\n")
+            # logging.debug("1. result: ", result, "\n")
+            # logging.debug("2. result['choices']", result['choices'], "\n")
+            # logging.debug("3. result['choices'][0]", result['choices'][0], "\n")
+            # logging.debug("3.1 result['choices'][0]['message']", result['choices'][0]['message'], "\n")
+            ics_text = result['choices'][0]['message']['content']
+            # logging.debug("3.2 result['choices'][0]['message']['content']", ics_text, "\n")
+            # logging.debug("4. result['choices'][0]['text']",
+            #       result['choices'][0].get('text', f"No 'text' value in {result['choices'][0]}"), "\n")
+            print(ics_text)
         except requests.exceptions.RequestException as e:
             logging.error(f"Request failed: {e}")
             # logging.debug(f"response: {json.dumps(response)}")
