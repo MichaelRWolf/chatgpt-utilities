@@ -9,7 +9,7 @@ import requests
 
 def main():
     # Configure logging
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.WARNING)
 
     # Argument parser setup
     parser = argparse.ArgumentParser(description='Send a prompt to OpenAI and display the result.')
@@ -58,16 +58,6 @@ def main():
     }
 
     data = {
-        'prompt': prompt,
-        'max_tokens': 150,
-    }
-
-    data = {
-        'model': 'gpt-4o',
-        'prompt': 'Say this is a test',
-        'max_tokens': 5
-    }
-    data = {
         'model': 'gpt-4o',
         'messages': [
             {
@@ -103,12 +93,19 @@ def main():
             result = response.json()
             logging.info(f"Usage details: {result.get('usage', 'No usage info')}")
             logging.debug(f"result: {result}")
+            choices_0 = result['choices'][0]
+            choices_0_message = choices_0['message']
+            if 'finish_reason' in choices_0 and choices_0['finish_reason'] == 'stop':
+                logging.info(f"Choices 0 finish_reason: {choices_0['finish_reason']}")
+            else:
+                logging.warning(
+                    f"Choices 0 message finish_reason is not 'stop': {choices_0['finish_reason']}")
 
             # logging.debug("1. result: ", result, "\n")
             # logging.debug("2. result['choices']", result['choices'], "\n")
             # logging.debug("3. result['choices'][0]", result['choices'][0], "\n")
             # logging.debug("3.1 result['choices'][0]['message']", result['choices'][0]['message'], "\n")
-            ics_text = result['choices'][0]['message']['content']
+            ics_text = choices_0_message['content']
             # logging.debug("3.2 result['choices'][0]['message']['content']", ics_text, "\n")
             # logging.debug("4. result['choices'][0]['text']",
             #       result['choices'][0].get('text', f"No 'text' value in {result['choices'][0]}"), "\n")
