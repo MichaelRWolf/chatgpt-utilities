@@ -9,7 +9,9 @@ import requests
 
 def main():
     # Configure logging
-    logging.basicConfig(level=logging.WARNING)
+    logging.basicConfig(level=(getattr(logging,
+                                       os.getenv('LOGLEVEL', 'WARNING').upper(),
+                                       logging.WARNING)))
 
     # Argument parser setup
     parser = argparse.ArgumentParser(description='Send a prompt to OpenAI and display the result.')
@@ -73,7 +75,7 @@ def main():
                 'content': prompt
             }
         ],
-        'max_tokens': 200,
+        'max_tokens': 200
     }
 
     if args.no_execute:
@@ -97,12 +99,13 @@ def main():
             choices_0 = result['choices'][0]
             choices_0_message = choices_0['message']
             usage_details = f"Usage details: {result.get('usage', 'No usage info')}"
-            if 'finish_reason' in choices_0 and choices_0['finish_reason'] == 'stop':
-                logging.info(f"Choices 0 finish_reason: {choices_0['finish_reason']}")
+            finish_reason = choices_0.get('finish_reason', None)
+            if finish_reason == 'stop':
+                logging.info(f"Choices 0 finish_reason: {finish_reason}")
                 logging.info(usage_details)
             else:
                 logging.warning(
-                    f"Choices 0 message finish_reason is not 'stop': {choices_0['finish_reason']}")
+                    f"Choices 0 message finish_reason is not 'stop': {finish_reason}")
                 logging.warning(usage_details)
 
             # logging.debug("1. result: ", result, "\n")
