@@ -33,21 +33,41 @@ def main():
     - Analyze text input from `Raw Input` section (below).
     - If it looks like a calendar event, 
         then organize it into the form of an *.ics file
-        else the reply should be "No calendar event found this input", followed by the text from 'Raw Input' section.
+        else if it looks like a contact (person or business)
+        then organize it into the form of a vCard file
+        else the reply should be "No calendar or contact found in this input", followed by the text from 'Raw Input' section.
         
-    Other considerations:
+    Other considerations for calendar events
     - Before generating the *.ics file, determine the current date and time.
     - If the event does not contain a year, add a year so that the event is in the future.
     - Do not generate a DTSTAMP line.
+    
+    Other considerations for contacts
+    - Search for information that looks like a person's name, phone number, email address, street address, website URL.  If it contains any of these types of informaton, generate either a person vCard, a business vCard, or both.
+    - Realize that information may not be in a standard format.  For instance, it may all be on a single line.
+        Example: SoftEd USA, 201 Commonwealth Court, Cary, NC, 27511, United States
+    - If there is only a single line, try breaking the line at punctuation, then retry analysis.        
+    - If there is a person name, generatea  vCard for a person.  If not, generate a vCard for a business.
+    - If there is both a person name and a business name, then generate a vCard for both the person and the business.
     """
 
     output_format = """
-    If it looks like a calendar event,
-     - output the text as an *.ics file
-     - use version 2.0 (from RFC 5545)
-     - do NOT include leading or trailing triple-back-ticks
-     - do NOT include leading or trailing explanation
-    """
+For calendar events 
+- never surround *.ics output with triple-back-ticks
+- never include leading or trailing explanation    
+- output the text as an *.ics file
+- use version 2.0 (from RFC 5545)
+
+For person contact cards and business contact cards
+- never surround *.vcf output with triple-back-ticks
+- never include leading or trailing explanation    
+- If fields are missing from an address, remember to add semi-colons to comply with the standars
+   ADR:post-office-box;extended-address;street-address;locality;region;postal-code;country-name
+Example - this indicates an empty `post-office-box` and `extended-address` field:
+   ADR:;;201 Commonwealth Court;Cary;NC;27511;United States
+
+For all output formats
+ """
 
     # Step 4: Concatenate 'instructions' and 'raw_input' to form the prompt
     prompt = json.dumps(f"* Instructions\n{instructions}\n\n"
